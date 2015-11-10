@@ -1,0 +1,14 @@
+{
+  "name": "reddit-sidebar-twitch",
+  "version": "0.0.1",
+  "description": "Add twitch game streams to a subreddit's sidebar.",
+  "main": "index.js",
+  "author": "Kera",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^1.2.0",
+    "lodash": "^3.10.1",
+    "node-fetch": "^1.3.3",
+    "snoocore": "^3.2.0"
+  }
+}
