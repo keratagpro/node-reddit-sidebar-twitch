@@ -37,6 +37,11 @@ Promise.all([
     wiki.content_md = sidebar.replaceTwitch(wiki.content_md, streamsMarkdown);
     wiki.reason = `Update Twitch Cards - ${slicedStreams.length} streamers`;
 
+    if (!wiki.content_md) {
+        console.log("Ending -- Cannot update.");
+        return;
+    }
+
     var style = {};
     style.content = stylesheet.content_md.replace(/&gt;/g, ">");
     style.reason = wiki.reason;
