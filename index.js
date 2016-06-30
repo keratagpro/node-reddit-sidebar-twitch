@@ -45,4 +45,5 @@ Promise.all([
             .then(subreddit.updateStylesheet(style));
 }).catch(function() {
     console.log(arguments);
+    process.exit(1);
 });
