@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').config({silent: true});
 
 var subreddit = require('./util/subreddit');
 var twitch = require('./util/twitch');
