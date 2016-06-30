@@ -1,20 +1,18 @@
-var _ = require('lodash');
 var fs = require('fs');
 
 const SIDEBAR_TWITCH_HEADER = '- **Live** *streams*';
 const SIDEBAR_TWITCH_FOOTER = '- [**.** *see more »*]';
 
 function renderStreams(streams) {
-    var tpl = fs.readFileSync('./streams.md.tpl', 'utf8');
-    var template = _.template(tpl);
-
     if (streams.length === 0 ) {
         return "";
     }
 
-    return template({
-        streams: streams.map(stream => `* [**${stream.status}** *${stream.name}*](${stream.url})`).join('\n')
-    });
+    var output = streams.map(s => {
+        `* [**${s.status}** *${s.name}*](${s.url})`
+    }).join('\n');
+
+    return output;
 }
 
 function replaceContent(content, replacement, header, footer) {
