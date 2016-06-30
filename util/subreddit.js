@@ -1,44 +1,74 @@
 var Snoocore = require('snoocore');
+var fs = require("fs");
+
+const SPRITESHEET_FILEPATH = __dirname+"/../.tmp/twitch-sprites.png";
+const SUBREDDIT_IMAGE_NAME = "stream-cards";
 
 var reddit = new Snoocore({
-	userAgent: '/u/laevus sidebar-twitch@0.0.1',
-	oauth: {
-		type: 'script',
-		key: process.env.APP_KEY,
-		secret: process.env.APP_SECRET,
-		username: process.env.APP_USERNAME,
-		password: process.env.APP_PASSWORD,
-		scope: ['modconfig']
-	}
+    userAgent: '/u/ylambda sidebar-twitch@0.0.1',
+    oauth: {
+        type: 'script',
+        key: process.env.APP_KEY,
+        secret: process.env.APP_SECRET,
+        username: process.env.APP_USERNAME,
+        password: process.env.APP_PASSWORD,
+        scope: ['modconfig', 'wikiedit', 'wikiread', 'modwiki']
+    }
 });
 
-function fetchSettings(subreddit) {
-	return reddit(`/r/${subreddit}/about/edit`).get()
-		.then(res => res.data);
+function fetchSidebar() {
+    var subreddit = process.env.APP_SUBREDDIT;
+    return reddit(`/r/${subreddit}/wiki/config/sidebar`).get()
+        .then(res => res.data);
 }
 
-function fetchDescription(subreddit) {
-	return fetchSettings().then(sidebar => sidebar.description);
+function fetchStylesheet() {
+    var subreddit = process.env.APP_SUBREDDIT;
+    return reddit(`/r/${subreddit}/stylesheet`).get()
+        .then(res => res);
 }
 
-function updateSettings(data) {
-	if (!data.sr) {
-		data.sr = data.subreddit_id;
-	}
+function updateSidebar(wiki) {
+    var subreddit = process.env.APP_SUBREDDIT;
+    var data = {
+        content: wiki.content_md,
+        page: "config/sidebar",
+        reason: wiki.reason
+    }
 
-	if (!data.link_type) {
-		data.link_type = data.content_options;
-	}
-
-	if (!data.type) {
-		data.type = data.subreddit_type;
-	}
-
-	return reddit('/api/site_admin').post(data);
+    return reddit(`r/${subreddit}/api/wiki/edit`).post(data);
 }
+
+function updateThumbnails() {
+    var subreddit = process.env.APP_SUBREDDIT;
+    var file = fs.readFileSync(SPRITESHEET_FILEPATH);
+    var data = {
+        file: Snoocore.file('twitch-sprites.png', 'image/png', file),
+        img_type: "png",
+        name: SUBREDDIT_IMAGE_NAME,
+        header: 0,
+        upload_type: "img"
+    }
+
+    return reddit(`r/${subreddit}/api/upload_sr_img`).post(data)
+}
+
+function updateStylesheet(style) {
+    var subreddit = process.env.APP_SUBREDDIT;
+    var data = {
+        stylesheet_contents: style.content,
+        op: "save",
+        reason: style.reason
+    }
+
+    return reddit(`r/${subreddit}/api/subreddit_stylesheet`).post(data);
+}
+
 
 module.exports = {
-	fetchSettings,
-	fetchDescription,
-	updateSettings
+    fetchSidebar,
+    fetchStylesheet,
+    updateSidebar,
+    updateThumbnails,
+    updateStylesheet
 };
