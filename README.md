@@ -2,6 +2,8 @@
 
 Simple NodeJS project that can add Twitch streams of a specific game to a subreddit's sidebar.
 
+This is a fork of [Kera's Twitch Stream Bot](https://github.com/keratagpro/node-reddit-sidebar-twitch) which adds thumbnail sprites.
+
 ## Usage
 
 0. Run `npm install` to install dependencies.
