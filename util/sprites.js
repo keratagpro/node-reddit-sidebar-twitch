@@ -8,7 +8,11 @@ function createSpritesheet(streams) {
         var thumbnails = streams.map(stream => stream.thumbnail);
         var options = {
             src: thumbnails,
-            padding: 0
+            padding: 0,
+            algorithm: "top-down",
+            algorithmOpts: {
+                sort: false
+            }
         };
 
         spritesmith.run(options, function(err, result) {
