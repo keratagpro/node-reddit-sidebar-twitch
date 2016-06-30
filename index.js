@@ -4,6 +4,7 @@ var subreddit = require('./util/subreddit');
 var twitch = require('./util/twitch');
 var sidebar = require('./util/sidebar');
 var sprites = require("./util/sprites");
+var fs = require("fs");
 
 Promise.all([
     twitch.fetchGameStreams(process.env.APP_TWITCH_GAME),
@@ -37,7 +38,7 @@ Promise.all([
     wiki.reason = `Update Twitch Cards - ${slicedStreams.length} streamers`;
 
     var style = {};
-    style.content = stylesheet;
+    style.content = stylesheet.content_md.replace(/&gt;/g, ">");
     style.reason = wiki.reason;
 
     return subreddit.updateSidebar(wiki)

@@ -24,8 +24,8 @@ function fetchSidebar() {
 
 function fetchStylesheet() {
     var subreddit = process.env.APP_SUBREDDIT;
-    return reddit(`/r/${subreddit}/stylesheet`).get()
-        .then(res => res);
+    return reddit(`/r/${subreddit}/wiki/config/stylesheet`).get()
+        .then(res => res.data);
 }
 
 function updateSidebar(wiki) {
@@ -56,12 +56,12 @@ function updateThumbnails() {
 function updateStylesheet(style) {
     var subreddit = process.env.APP_SUBREDDIT;
     var data = {
-        stylesheet_contents: style.content,
-        op: "save",
+        content: style.content,
+        page: "config/stylesheet",
         reason: style.reason
     }
 
-    return reddit(`r/${subreddit}/api/subreddit_stylesheet`).post(data);
+    return reddit(`r/${subreddit}/api/wiki/edit`).post(data);
 }
 
 
