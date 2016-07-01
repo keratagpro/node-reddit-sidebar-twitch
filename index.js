@@ -8,7 +8,7 @@ var Entities = require("html-entities").AllHtmlEntities;
 var entities = new Entities();
 
 function fetchStreamsAndCreateSprites () {
-    return twitch.fetchGameStreams(process.env.APP_TWITCH_GAME)
+    return twitch.fetchStreams(process.env.APP_TWITCH_GAME)
         .then(sprites.createSpritesheet);
 }
 

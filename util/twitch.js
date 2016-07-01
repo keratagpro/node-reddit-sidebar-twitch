@@ -1,6 +1,5 @@
 var fs = require("fs");
 var path = require("path");
-var https = require("https");
 var fetch = require('node-fetch');
 var mkdirp = require("mkdirp");
 var rimraf = require("rimraf");
@@ -22,17 +21,10 @@ function fetchGameStreams(game) {
                 }
             });
         })
-        .then(streams => {
-            rimraf.sync(THUMBNAIL_DIRECTORY);
-            mkdirp.sync(THUMBNAIL_DIRECTORY);
-
-            return Promise.all(streams.map(fetchStreamThumbnail));
-        });
 }
 
 function fetchStreamThumbnail (stream) {
     return new Promise((resolve, reject) => {
-
         var filename = stream.name.replace(" ", "_").trim() + ".jpg";
         var filepath = path.join(THUMBNAIL_DIRECTORY, filename);
         var file = fs.createWriteStream(filepath);
@@ -41,17 +33,26 @@ function fetchStreamThumbnail (stream) {
 
         stream.thumbnail = filepath;
 
-        https.get(stream.thumbnail_src, res => {
-            if (res.statusCode !== 200) {
+        fetch(stream.thumbnail_src).then(res => {
+            if (res.status !== 200) {
                 var thumbnail_404 = path.resolve(__dirname, "../assets/404_thumbnail.jpg");
                 return fs.createReadStream(thumbnail_404).pipe(file);
             }
-            res.pipe(file)
-        }).on("error", (err) => reject(err));
+            res.body.pipe(file)
+        }).catch(() => reject(arguments));
 
     });
 }
 
+function fetchStreams(game) {
+    return fetchGameStreams(game)
+        .then(streams => {
+            rimraf.sync(THUMBNAIL_DIRECTORY);
+            mkdirp.sync(THUMBNAIL_DIRECTORY);
+            return Promise.all(streams.map(fetchStreamThumbnail));
+        });
+}
+
 module.exports = {
-    fetchGameStreams
+    fetchStreams
 }
