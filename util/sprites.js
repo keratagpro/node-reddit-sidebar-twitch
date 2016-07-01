@@ -16,31 +16,12 @@ function createSpritesheet(streams) {
         };
 
         spritesmith.run(options, function(err, result) {
-
             if (err) {
-                console.log(err);
                 return reject(err);
             }
 
-            streams = streams.map(stream => {
-                var coords = result.coordinates[stream.thumbnail];
-
-                stream.sprite = {
-                    x: coords.x,
-                    y: coords.y,
-                    width: coords.width,
-                    height: coords.height,
-                };
-
-                return stream;
-            });
-
             fs.writeFile(SPRITESHEET_FILEPATH, result.image, err => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(streams);
+                err ? reject(err) : resolve(streams);
             });
 
         });
