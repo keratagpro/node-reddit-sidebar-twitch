@@ -4,6 +4,8 @@ var subreddit = require('./util/subreddit');
 var twitch = require('./util/twitch');
 var sidebar = require('./util/sidebar');
 var sprites = require("./util/sprites");
+var Entities = require("html-entities").AllHtmlEntities;
+var entities = new Entities();
 
 function fetchStreamsAndCreateSprites () {
     return twitch.fetchGameStreams(process.env.APP_TWITCH_GAME)
@@ -32,7 +34,7 @@ Promise.all([
     }
 
     var style = {};
-    style.content = stylesheet.content_md.replace(/&gt;/g, ">");
+    style.content = entities.decode(stylesheet.content_md);
     style.reason = wiki.reason;
 
     return subreddit.updateSidebar(wiki)
