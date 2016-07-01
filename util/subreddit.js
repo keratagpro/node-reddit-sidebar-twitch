@@ -50,7 +50,7 @@ function updateThumbnails() {
         upload_type: "img"
     }
 
-    return reddit(`r/${subreddit}/api/upload_sr_img`).post(data)
+    return reddit(`r/${subreddit}/api/upload_sr_img`).post(data);
 }
 
 function updateStylesheet(style) {

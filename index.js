@@ -4,31 +4,20 @@ var subreddit = require('./util/subreddit');
 var twitch = require('./util/twitch');
 var sidebar = require('./util/sidebar');
 var sprites = require("./util/sprites");
-var fs = require("fs");
+
+function fetchStreamsAndCreateSprites () {
+    return twitch.fetchGameStreams(process.env.APP_TWITCH_GAME)
+        .then(sprites.createSpritesheet);
+}
 
 Promise.all([
-    twitch.fetchGameStreams(process.env.APP_TWITCH_GAME),
+    fetchStreamsAndCreateSprites(),
     subreddit.fetchSidebar(),
-    subreddit.fetchStylesheet(),
+    subreddit.fetchStylesheet()
 ]).then(function(results) {
     var streams = results[0];
-    var sidebar = results[1];
-    var style = results[2];
-
-    var p = sprites.createSpritesheet(streams)
-        .then((streams) => {
-            return {
-                streams: streams,
-                sidebar: sidebar,
-                style: style
-            }
-        })
-
-    return p;
-}).then(function(results) {
-    var streams = results.streams;
-    var wiki = results.sidebar;
-    var stylesheet = results.style
+    var wiki = results[1];
+    var stylesheet = results[2];
 
     var maxStreams = parseInt(process.env.APP_MAX_STREAMS, 10)
     var slicedStreams = streams.slice(0, maxStreams);
@@ -47,8 +36,10 @@ Promise.all([
     style.reason = wiki.reason;
 
     return subreddit.updateSidebar(wiki)
-            .then(subreddit.updateThumbnails())
-            .then(subreddit.updateStylesheet(style));
+            .then(() => subreddit.updateThumbnails())
+            .then(() => subreddit.updateStylesheet(style))
+            .then(() => console.log("Update complete: %s", style.reason));
+
 }).catch(function() {
     console.log(arguments);
     process.exit(1);

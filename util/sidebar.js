@@ -9,10 +9,10 @@ function renderStreams(streams) {
     }
 
     var output = streams.map(s => {
-        `* [**${s.status}** *${s.name}*](${s.url})`
+        return `- [**${s.status}** *${s.name}*](${s.url})`;
     }).join('\n');
 
-    return output;
+    return output + "\n";
 }
 
 function replaceContent(content, replacement, header, footer) {
@@ -27,8 +27,7 @@ function replaceContent(content, replacement, header, footer) {
 
     var end = content.indexOf(footer, start);
 
-    var minimumReplacement = 8;
-    var hasNewStreamers = replacement.length > minimumReplacement;
+    var hasNewStreamers = replacement.length > 0;
     var hasOldStreamers = (end - start !== 1);
     if (!hasNewStreamers && !hasOldStreamers) {
         console.log("0 new streamers, 0 old streamers");
