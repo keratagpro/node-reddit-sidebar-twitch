@@ -30,7 +30,7 @@ function replaceContent(content, replacement, header, footer) {
     var hasNewStreamers = replacement.length > 0;
     var hasOldStreamers = (end - start !== 1);
     if (!hasNewStreamers && !hasOldStreamers) {
-        console.log("0 new streamers, 0 old streamers");
+        console.log("Nothing to update");
         return;
     }
 
