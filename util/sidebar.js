@@ -1,5 +1,3 @@
-var fs = require('fs');
-
 const SIDEBAR_TWITCH_HEADER = '- **Live** *streams*';
 const SIDEBAR_TWITCH_FOOTER = '- [**.** *see more »*]';
 
@@ -56,4 +54,4 @@ module.exports = {
     renderStreams,
     replaceContent,
     replaceTwitch
-}
+};

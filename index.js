@@ -1,14 +1,23 @@
-require('dotenv').config({silent: true});
+require('dotenv').config({ silent: true });
+const Entities = require("html-entities").AllHtmlEntities;
 
-var subreddit = require('./util/subreddit');
-var twitch = require('./util/twitch');
-var sidebar = require('./util/sidebar');
-var sprites = require("./util/sprites");
-var Entities = require("html-entities").AllHtmlEntities;
-var entities = new Entities();
+const subreddit = require('./util/subreddit');
+const streams = require('./util/streams');
+const sidebar = require('./util/sidebar');
+const sprites = require("./util/sprites");
 
-function fetchStreamsAndCreateSprites () {
-    return twitch.fetchStreams(process.env.APP_TWITCH_GAME)
+const entities = new Entities();
+
+const MAX_STREAMS = parseInt(process.env.MAX_STREAMS, 10);
+
+function fetchStreamsAndCreateSprites() {
+    return streams.fetchStreamsAndThumbnails({
+        twitchClientId: process.env.TWITCH_CLIENT_ID,
+        twitchGame: process.env.TWITCH_GAME,
+        youtubeKey: process.env.YOUTUBE_KEY,
+        youtubeQuery: process.env.YOUTUBE_QUERY,
+        limit: MAX_STREAMS
+    })
         .then(sprites.createSpritesheet);
 }
 
@@ -16,17 +25,12 @@ Promise.all([
     fetchStreamsAndCreateSprites(),
     subreddit.fetchSidebar(),
     subreddit.fetchStylesheet()
-]).then(function(results) {
-    var streams = results[0];
-    var wiki = results[1];
-    var stylesheet = results[2];
-
-    var maxStreams = parseInt(process.env.APP_MAX_STREAMS, 10)
-    var slicedStreams = streams.slice(0, maxStreams);
+]).then(([streams, wiki, stylesheet]) => {
+    var slicedStreams = streams.slice(0, MAX_STREAMS);
 
     var streamsMarkdown = sidebar.renderStreams(slicedStreams);
     wiki.content_md = sidebar.replaceTwitch(wiki.content_md, streamsMarkdown);
-    wiki.reason = `Update Twitch Cards - ${slicedStreams.length} streamers`;
+    wiki.reason = `Update Twitch & Youtube Cards - ${slicedStreams.length} streamers`;
 
     if (!wiki.content_md) {
         console.log("Ending -- Cannot update.");
@@ -38,11 +42,16 @@ Promise.all([
     style.reason = wiki.reason;
 
     return subreddit.updateSidebar(wiki)
-            .then(() => subreddit.updateThumbnails())
-            .then(() => subreddit.updateStylesheet(style))
-            .then(() => console.log("Update complete: %s", style.reason));
+        .then(() => subreddit.updateThumbnails())
+        .then(() => subreddit.updateStylesheet(style))
+        .then(() => console.log("Update complete: %s", style.reason));
 
-}).catch(function() {
-    console.log(arguments);
+}).catch(function(err) {
+    console.error(err);
     process.exit(1);
 });
+
+// NOTE: For testing.
+// fetchStreamsAndCreateSprites()
+//     .then(streams => console.log(`Found ${streams.length} streams.`, streams))
+//     .catch(err => console.error(err));

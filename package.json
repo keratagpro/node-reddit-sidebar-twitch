@@ -1,9 +1,12 @@
 {
-  "name": "reddit-sidebar-twitch",
+  "name": "reddit-sidebar-game-streams",
   "version": "0.0.1",
-  "description": "Add twitch game streams to a subreddit's sidebar.",
+  "description": "Add twitch & youtube game streams to a subreddit's sidebar.",
   "main": "index.js",
   "author": "Kera",
+  "contributors": [
+      "ylambda"
+  ],
   "license": "ISC",
   "dependencies": {
     "dotenv": "^1.2.0",

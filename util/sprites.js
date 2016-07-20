@@ -1,7 +1,7 @@
 var fs = require("fs");
 var spritesmith = require("spritesmith");
 
-const SPRITESHEET_FILEPATH = __dirname+"/../.tmp/twitch-sprites.png";
+const SPRITESHEET_FILEPATH = __dirname + "/../.tmp/stream-sprites.png";
 
 function createSpritesheet(streams) {
     return new Promise((resolve, reject) => {

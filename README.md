@@ -1,8 +1,7 @@
 # Reddit Sidebar Twitch Widget
 
-Simple NodeJS project that can add Twitch streams of a specific game to a subreddit's sidebar.
-
-This is a fork of [Kera's Twitch Stream Bot](https://github.com/keratagpro/node-reddit-sidebar-twitch) which adds thumbnail sprites.
+Simple NodeJS project that can add Twitch & YouTube streams of a specific game to a subreddit's sidebar.
+A spritesheet of stream thumbnails is also created.
 
 ## Usage
 
@@ -10,12 +9,15 @@ This is a fork of [Kera's Twitch Stream Bot](https://github.com/keratagpro/node-
 
 1. Rename `.env.example` to `.env` and change as necessary:
 
-        APP_KEY=<Your app ID>
-        APP_SECRET=<Your app secret>
-        APP_USERNAME=<reddit password>
-        APP_PASSWORD=<reddit password>
-        APP_SUBREDDIT=<subreddit name, e.g. tagpro>
-        APP_TWITCH_GAME=TagPro
-        APP_MAX_STREAMS=<max number of streams>
+        REDDIT_KEY=<Your app ID>
+        REDDIT_SECRET=<Your app secret>
+        REDDIT_USERNAME=<reddit password>
+        REDDIT_PASSWORD=<reddit password>
+        REDDIT_SUBREDDIT=<subreddit name, e.g. tagpro>
+        TWITCH_CLIENT_ID=<Your Twitch app ID>
+        TWITCH_GAME=TagPro
+        YOUTUBE_KEY=<Your YouTube Data API Key>
+        YOUTUBE_QUERY=TagPro
+        MAX_STREAMS=<max number of streams>
 
 2. Run with `node index.js`
