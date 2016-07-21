@@ -5,6 +5,11 @@ const mkdirp = require("mkdirp");
 const rimraf = require("rimraf");
 const sanitize = require('sanitize-filename');
 
+const thumbnailDefaults = {
+    twitch: "twitch_thumbnail.jpg",
+    youtube: "youtube_thumbnail.jpg"
+}
+
 function fetchStreamThumbnails(streams, outDir = '.') {
     return rimrafAsync(outDir)
         .then(() => mkdirpAsync(outDir))
@@ -23,9 +28,11 @@ function fetchStreamThumbnail(stream, outDir) {
 
         fetch(stream.thumbnail_src).then(res => {
             if (!res.ok) {
-                var thumbnail_404 = path.resolve(__dirname, "../assets/404_thumbnail.jpg");
+                var asset = thumbnailDefaults[stream.stream_src];
+                var thumbnail_404 = path.resolve(__dirname, `../../assets/${asset}`);
                 return fs.createReadStream(thumbnail_404).pipe(file);
             }
+
             res.body.pipe(file);
         }).catch(() => reject(arguments));
     });

@@ -19,7 +19,8 @@ function fetchYoutubeStreams(query, key, limit = 10) {
                     name: item.snippet.channelTitle,
                     status: item.snippet.title,
                     url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
-                    thumbnail_src: item.snippet.thumbnails.medium.url
+                    thumbnail_src: item.snippet.thumbnails.medium.url,
+                    stream_src: "youtube"
                 };
             });
         });
