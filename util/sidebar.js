@@ -47,7 +47,8 @@ function replaceTwitch(content, replacement) {
         content,
         replacement,
         SIDEBAR_TWITCH_HEADER,
-        SIDEBAR_TWITCH_FOOTER);
+        SIDEBAR_TWITCH_FOOTER
+    );
 }
 
 module.exports = {

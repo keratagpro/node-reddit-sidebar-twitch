@@ -2,15 +2,22 @@ require('dotenv').config({ silent: true });
 const Entities = require("html-entities").AllHtmlEntities;
 const path = require('path');
 
-const subreddit = require('./util/subreddit');
+const Subreddit = require('./util/subreddit');
 const sidebar = require('./util/sidebar');
 const { fetchStreamsAndCreateSprites } = require('./util/streams');
-
-const entities = new Entities();
 
 const MAX_STREAMS = parseInt(process.env.MAX_STREAMS, 10);
 const SPRITESHEET_FILEPATH = path.join(__dirname, '.tmp/stream-sprites.png');
 const THUMBNAIL_DIRECTORY = path.join(__dirname, ".tmp/thumbnails");
+
+const entities = new Entities();
+const subreddit = new Subreddit({
+    subreddit: process.env.REDDIT_SUBREDDIT,
+    key: process.env.REDDIT_KEY,
+    secret: process.env.REDDIT_SECRET,
+    username: process.env.REDDIT_USERNAME,
+    password: process.env.REDDIT_PASSWORD
+});
 
 Promise.all([
     fetchStreamsAndCreateSprites({
@@ -25,11 +32,9 @@ Promise.all([
     subreddit.fetchSidebar(),
     subreddit.fetchStylesheet()
 ]).then(([streams, wiki, stylesheet]) => {
-    var slicedStreams = streams.slice(0, MAX_STREAMS);
-
-    var streamsMarkdown = sidebar.renderStreams(slicedStreams);
+    var streamsMarkdown = sidebar.renderStreams(streams);
     wiki.content_md = sidebar.replaceTwitch(wiki.content_md, streamsMarkdown);
-    wiki.reason = `Update Twitch & Youtube Cards - ${slicedStreams.length} streamers`;
+    wiki.reason = `Update Twitch & Youtube Cards - ${streams.length} streamers`;
 
     if (!wiki.content_md) {
         console.log("Ending -- Cannot update.");
