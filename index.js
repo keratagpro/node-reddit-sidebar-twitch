@@ -33,7 +33,7 @@ Promise.all([
     subreddit.fetchStylesheet()
 ]).then(([streams, wiki, stylesheet]) => {
     var streamsMarkdown = sidebar.renderStreams(streams);
-    wiki.content_md = sidebar.replaceTwitch(wiki.content_md, streamsMarkdown);
+    wiki.content_md = sidebar.replaceStreams(wiki.content_md, streamsMarkdown);
     wiki.reason = `Update Twitch & Youtube Cards - ${streams.length} streamers`;
 
     if (!wiki.content_md) {

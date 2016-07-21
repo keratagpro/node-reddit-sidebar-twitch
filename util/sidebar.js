@@ -1,5 +1,5 @@
-const SIDEBAR_TWITCH_HEADER = '- **Live** *streams*';
-const SIDEBAR_TWITCH_FOOTER = '- [**.** *see more »*]';
+const SIDEBAR_STREAMS_HEADER = '- **Live** *streams*';
+const SIDEBAR_STREAMS_FOOTER = '- [**.** *see more »*]';
 
 function renderStreams(streams) {
     if (streams.length === 0 ) {
@@ -42,17 +42,17 @@ function replaceContent(content, replacement, header, footer) {
         content.substring(end);
 }
 
-function replaceTwitch(content, replacement) {
+function replaceStreams(content, replacement) {
     return replaceContent(
         content,
         replacement,
-        SIDEBAR_TWITCH_HEADER,
-        SIDEBAR_TWITCH_FOOTER
+        SIDEBAR_STREAMS_HEADER,
+        SIDEBAR_STREAMS_FOOTER
     );
 }
 
 module.exports = {
     renderStreams,
     replaceContent,
-    replaceTwitch
+    replaceStreams
 };
