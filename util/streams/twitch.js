@@ -1,14 +1,8 @@
 const fetch = require('node-fetch');
-const url = require('url');
+
+const { buildUrl } = require('./utils');
 
 const TWITCH_GAME_STREAMS_URL = 'https://api.twitch.tv/kraken/streams';
-
-function buildUrl(baseUrl, query) {
-    var link = url.parse(baseUrl, true);
-    link.query = Object.assign({}, link.query, query);
-    delete link.search;
-    return url.format(link);
-}
 
 function fetchTwitchStreams(game, clientId, limit = 10) {
     var link = buildUrl(TWITCH_GAME_STREAMS_URL, {

@@ -1,9 +1,7 @@
-var fs = require("fs");
-var spritesmith = require("spritesmith");
+const fs = require("fs");
+const spritesmith = require("spritesmith");
 
-const SPRITESHEET_FILEPATH = __dirname + "/../.tmp/stream-sprites.png";
-
-function createSpritesheet(streams) {
+function createSpritesheet(streams, filename = 'stream-sprites.png') {
     return new Promise((resolve, reject) => {
         var thumbnails = streams.map(stream => stream.thumbnail);
         var options = {
@@ -20,7 +18,7 @@ function createSpritesheet(streams) {
                 return reject(err);
             }
 
-            fs.writeFile(SPRITESHEET_FILEPATH, result.image, err => {
+            fs.writeFile(filename, result.image, err => {
                 err ? reject(err) : resolve(streams);
             });
 
@@ -29,5 +27,5 @@ function createSpritesheet(streams) {
 }
 
 module.exports = {
-    createSpritesheet: createSpritesheet
+    createSpritesheet
 };

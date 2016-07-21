@@ -1,28 +1,27 @@
 require('dotenv').config({ silent: true });
 const Entities = require("html-entities").AllHtmlEntities;
+const path = require('path');
 
 const subreddit = require('./util/subreddit');
-const streams = require('./util/streams');
 const sidebar = require('./util/sidebar');
-const sprites = require("./util/sprites");
+const { fetchStreamsAndCreateSprites } = require('./util/streams');
 
 const entities = new Entities();
 
 const MAX_STREAMS = parseInt(process.env.MAX_STREAMS, 10);
+const SPRITESHEET_FILEPATH = path.join(__dirname, '.tmp/stream-sprites.png');
+const THUMBNAIL_DIRECTORY = path.join(__dirname, ".tmp/thumbnails");
 
-function fetchStreamsAndCreateSprites() {
-    return streams.fetchStreamsAndThumbnails({
+Promise.all([
+    fetchStreamsAndCreateSprites({
         twitchClientId: process.env.TWITCH_CLIENT_ID,
         twitchGame: process.env.TWITCH_GAME,
         youtubeKey: process.env.YOUTUBE_KEY,
         youtubeQuery: process.env.YOUTUBE_QUERY,
-        limit: MAX_STREAMS
-    })
-        .then(sprites.createSpritesheet);
-}
-
-Promise.all([
-    fetchStreamsAndCreateSprites(),
+        limit: MAX_STREAMS,
+        spritePath: SPRITESHEET_FILEPATH,
+        thumbnailDir: THUMBNAIL_DIRECTORY
+    }),
     subreddit.fetchSidebar(),
     subreddit.fetchStylesheet()
 ]).then(([streams, wiki, stylesheet]) => {
@@ -42,7 +41,7 @@ Promise.all([
     style.reason = wiki.reason;
 
     return subreddit.updateSidebar(wiki)
-        .then(() => subreddit.updateThumbnails())
+        .then(() => subreddit.updateThumbnails(SPRITESHEET_FILEPATH))
         .then(() => subreddit.updateStylesheet(style))
         .then(() => console.log("Update complete: %s", style.reason));
 
@@ -52,6 +51,14 @@ Promise.all([
 });
 
 // NOTE: For testing.
-// fetchStreamsAndCreateSprites()
+// fetchStreamsAndCreateSprites({
+//     twitchClientId: process.env.TWITCH_CLIENT_ID,
+//     twitchGame: process.env.TWITCH_GAME,
+//     youtubeKey: process.env.YOUTUBE_KEY,
+//     youtubeQuery: process.env.YOUTUBE_QUERY,
+//     limit: MAX_STREAMS,
+//     spritePath: SPRITESHEET_FILEPATH,
+//     thumbnailDir: THUMBNAIL_DIRECTORY
+// })
 //     .then(streams => console.log(`Found ${streams.length} streams.`, streams))
 //     .catch(err => console.error(err));

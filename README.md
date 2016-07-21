@@ -1,4 +1,4 @@
-# Reddit Sidebar Twitch Widget
+# Reddit Sidebar Game Streams
 
 Simple NodeJS project that can add Twitch & YouTube streams of a specific game to a subreddit's sidebar.
 A spritesheet of stream thumbnails is also created.
@@ -20,4 +20,4 @@ A spritesheet of stream thumbnails is also created.
         YOUTUBE_QUERY=TagPro
         MAX_STREAMS=<max number of streams>
 
-2. Run with `node index.js`
+2. Run with `npm start` (or `node index.js`).

@@ -1,7 +1,6 @@
 var Snoocore = require('snoocore');
 var fs = require("fs");
 
-const SPRITESHEET_FILEPATH = __dirname+"/../.tmp/stream-sprites.png";
 const SUBREDDIT_IMAGE_NAME = "stream-cards";
 
 var reddit = new Snoocore({
@@ -16,20 +15,17 @@ var reddit = new Snoocore({
     }
 });
 
-function fetchSidebar() {
-    var subreddit = process.env.REDDIT_SUBREDDIT;
+function fetchSidebar(subreddit = process.env.REDDIT_SUBREDDIT) {
     return reddit(`/r/${subreddit}/wiki/config/sidebar`).get()
         .then(res => res.data);
 }
 
-function fetchStylesheet() {
-    var subreddit = process.env.REDDIT_SUBREDDIT;
+function fetchStylesheet(subreddit = process.env.REDDIT_SUBREDDIT) {
     return reddit(`/r/${subreddit}/wiki/config/stylesheet`).get()
         .then(res => res.data);
 }
 
-function updateSidebar(wiki) {
-    var subreddit = process.env.REDDIT_SUBREDDIT;
+function updateSidebar(wiki, subreddit = process.env.REDDIT_SUBREDDIT) {
     var data = {
         content: wiki.content_md,
         page: "config/sidebar",
@@ -39,9 +35,8 @@ function updateSidebar(wiki) {
     return reddit(`r/${subreddit}/api/wiki/edit`).post(data);
 }
 
-function updateThumbnails() {
-    var subreddit = process.env.REDDIT_SUBREDDIT;
-    var file = fs.readFileSync(SPRITESHEET_FILEPATH);
+function updateThumbnails(spritePath, subreddit = process.env.REDDIT_SUBREDDIT) {
+    var file = fs.readFileSync(spritePath);
     var data = {
         file: Snoocore.file('stream-sprites.png', 'image/png', file),
         img_type: "png",
@@ -53,8 +48,7 @@ function updateThumbnails() {
     return reddit(`r/${subreddit}/api/upload_sr_img`).post(data);
 }
 
-function updateStylesheet(style) {
-    var subreddit = process.env.REDDIT_SUBREDDIT;
+function updateStylesheet(style, subreddit = process.env.REDDIT_SUBREDDIT) {
     var data = {
         content: style.content,
         page: "config/stylesheet",
