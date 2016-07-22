@@ -20,7 +20,8 @@ function fetchTwitchStreams(game, clientId, limit = 10) {
                     status: stream.channel.status,
                     url: stream.channel.url,
                     thumbnail_src: stream.preview.medium,
-                    stream_src: "twitch"
+                    stream_src: "twitch",
+                    viewers: stream.viewers
                 };
             });
         });
