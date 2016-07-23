@@ -25,7 +25,7 @@ class Subreddit {
             }
         });
     }
-
+    
     fetchSidebar() {
         return this.reddit(`/r/${this.subreddit}/wiki/config/sidebar`).get()
             .then(res => res.data);
@@ -34,6 +34,75 @@ class Subreddit {
     fetchStylesheet() {
         return this.reddit(`/r/${this.subreddit}/wiki/config/stylesheet`).get()
             .then(res => res.data);
+    }
+
+    fetchBotConfig() {
+        return this.reddit(`/r/${this.subreddit}/wiki/streams/streambot`).get()
+            .then(res => res.data)
+            .then(this.parseBotConfig);
+    }
+
+    parseBotConfig(data) {
+        var content = data.content_md;
+        var configCursor = 0;
+        var config = {};
+
+        /* Search the wiki page for lists of config options.
+         * A list has a name, list header, and list values
+         * An example format of a list is:
+         *
+         * ## Config List Name
+         *
+         * ListHeader1 | ListHeader2 | ListHeader..
+         * - | - | -
+         * a | b | c
+         * x | y | z
+         */
+
+        var listNameSearch = '## ';
+        var listNameStart = content.indexOf(listNameSearch, configCursor);
+
+        while (listNameStart !== -1) {
+            var listNameEnd = content.indexOf('\r\n\r\n', listNameStart);
+            var listName = content.slice(listNameStart + listNameSearch.length, listNameEnd);
+            var option = listName.toLowerCase().trim().replace(' ', '_');
+
+            config[option] = [];
+
+            var listHeaderStart = listNameEnd + 4;
+            var listHeaderEnd = content.indexOf('\r\n', listHeaderStart);
+            var listHeaders = content.slice(listHeaderStart, listHeaderEnd).trim();
+
+            listHeaders = listHeaders.split('|')
+                .map(header => header.toLowerCase().trim().replace(' ', '_'));
+
+            configCursor = listHeaderEnd + 2;
+
+            var lines = content.slice(configCursor).split('\r\n');
+            lines.some((line, index) => {
+                var values = line.split("|");
+                configCursor += line.length;
+
+                // discard the table alignment
+                if (index === 0) {
+                    return;
+                }
+
+                if (values.length === 0 || values.length !== listHeaders.length) {
+                    return true;
+                }
+
+                var listValue = {}
+                values.forEach((value, i) => {
+                    var key = listHeaders[i];
+                    listValue[key] = value;
+                });
+
+                config[option].push(listValue);
+            });
+
+            listNameStart = content.indexOf(listNameSearch, configCursor);
+        }
     }
 
     updateSidebar(wiki) {
