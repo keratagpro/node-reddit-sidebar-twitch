@@ -12,13 +12,15 @@ function fetchStreamsAndCreateSprites({
     youtubeLimit = limit,
     youtubeQuery,
     spritePath,
-    thumbnailDir
+    thumbnailDir,
+    blacklistedStreams
 }) {
     return Promise.all([
         fetchTwitchStreams(twitchGame, twitchClientId, twitchLimit),
         fetchYoutubeStreams(youtubeQuery, youtubeKey, youtubeLimit)
     ])
         .then(([twitchStreams, youtubeStreams]) => twitchStreams.concat(youtubeStreams))
+        .then(allStreams => allStreams.filter(s => blacklistedStreams.indexOf(s.url) === -1))
         .then(allStreams => allStreams.sort((a, b) => b.viewers - a.viewers))
         .then(allStreams => allStreams.slice(0, limit))
         .then(allStreams => fetchStreamThumbnails(allStreams, thumbnailDir))

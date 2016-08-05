@@ -39,7 +39,13 @@ class Subreddit {
     fetchBotConfig() {
         return this.reddit(`/r/${this.subreddit}/wiki/streams/streambot`).get()
             .then(res => res.data)
-            .then(this.parseBotConfig);
+            .then(this.parseBotConfig)
+            .catch((err) => {
+                console.log("Errors with bot config.");
+                return {
+                    blacklisted_streams: []
+                };
+            });
     }
 
     parseBotConfig(data) {
@@ -103,6 +109,8 @@ class Subreddit {
 
             listNameStart = content.indexOf(listNameSearch, configCursor);
         }
+
+        return config;
     }
 
     updateSidebar(wiki) {
