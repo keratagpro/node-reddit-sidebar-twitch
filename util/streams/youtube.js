@@ -21,6 +21,7 @@ function fetchYoutubeStreams(query, key, limit = 10) {
                     videoId: item.id.videoId,
                     name: item.snippet.channelTitle,
                     status: item.snippet.title,
+                    description: item.snippet.description,
                     url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
                     thumbnail_src: item.snippet.thumbnails.medium.url,
                     stream_src: "youtube",
@@ -41,7 +42,8 @@ function filterExactMatches(streams, query) {
 
     return streams.filter(stream =>
         stream.name.toLowerCase().includes(query) ||
-        stream.status.toLowerCase().includes(query)
+        stream.status.toLowerCase().includes(query) ||
+        stream.description.toLowerCase().includes(query)
     );
 }
 
