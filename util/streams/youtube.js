@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const trim = require('lodash.trim');
 
 const { buildUrl } = require('./utils');
 
@@ -36,9 +37,11 @@ function filterExactMatches(streams, query) {
         return streams;
     }
 
+    query = trim(query, '"').toLowerCase();
+
     return streams.filter(stream =>
-        stream.name.includes(query) ||
-        stream.status.includes(query)
+        stream.name.toLowerCase().includes(query) ||
+        stream.status.toLowerCase().includes(query)
     );
 }
 
