@@ -27,7 +27,19 @@ function fetchYoutubeStreams(query, key, limit = 10) {
                 };
             });
         })
+        .then(streams => filterExactMatches(streams, query))
         .then(streams => Promise.all(streams.map(fetchYoutubeViewers)));
+}
+
+function filterExactMatches(streams, query) {
+    if (!query.startsWith('"')) {
+        return streams;
+    }
+
+    return streams.filter(stream =>
+        stream.name.includes(query) ||
+        stream.status.includes(query)
+    );
 }
 
 function fetchYoutubeViewers(stream) {
