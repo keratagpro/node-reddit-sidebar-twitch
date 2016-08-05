@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const trim = require('lodash.trim');
 
 const { buildUrl } = require('./utils');
 
@@ -20,6 +21,7 @@ function fetchYoutubeStreams(query, key, limit = 10) {
                     videoId: item.id.videoId,
                     name: item.snippet.channelTitle,
                     status: item.snippet.title,
+                    description: item.snippet.description,
                     url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
                     thumbnail_src: item.snippet.thumbnails.medium.url,
                     stream_src: "youtube",
@@ -27,7 +29,22 @@ function fetchYoutubeStreams(query, key, limit = 10) {
                 };
             });
         })
+        .then(streams => filterExactMatches(streams, query))
         .then(streams => Promise.all(streams.map(fetchYoutubeViewers)));
+}
+
+function filterExactMatches(streams, query) {
+    if (!query.startsWith('"')) {
+        return streams;
+    }
+
+    query = trim(query, '"').toLowerCase();
+
+    return streams.filter(stream =>
+        stream.name.toLowerCase().includes(query) ||
+        stream.status.toLowerCase().includes(query) ||
+        stream.description.toLowerCase().includes(query)
+    );
 }
 
 function fetchYoutubeViewers(stream) {
