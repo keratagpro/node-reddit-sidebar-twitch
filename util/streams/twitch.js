@@ -11,7 +11,11 @@ function fetchTwitchStreams(game, clientId, limit = 10) {
         client_id: clientId
     });
 
-    return fetch(link, {headers:{'Client-ID':clientId}})
+    var headers = {
+        'Client-ID': clientId
+    };
+
+    return fetch(link, headers)
         .then(res => res.json())
         .then(data => {
             return data.streams.map(stream => {
